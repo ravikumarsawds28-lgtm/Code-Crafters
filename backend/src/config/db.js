@@ -11,9 +11,13 @@ if (!connectionString) {
   connectionString = `postgresql://${process.env.PGUSER || process.env.USER || 'postgres'}:${process.env.PGPASSWORD || ''}@${process.env.PGHOST || 'localhost'}:${process.env.PGPORT || 5432}/${process.env.PGDATABASE || dbName}`;
 }
 
+const useSsl = process.env.DATABASE_URL &&
+  !connectionString.includes('localhost') &&
+  !connectionString.includes('127.0.0.1');
+
 const pool = new Pool({
   connectionString,
-  ssl: isProduction ? { rejectUnauthorized: false } : false,
+  ssl: useSsl ? { rejectUnauthorized: false } : false,
 });
 
 module.exports = {

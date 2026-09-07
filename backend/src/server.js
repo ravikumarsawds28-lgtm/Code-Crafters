@@ -1,6 +1,7 @@
 const path = require('path');
 const express = require('express');
 const app = require('./app');
+const { runMigrations } = require('./db/migrate');
 require('dotenv').config();
 
 const PORT = process.env.PORT || 5001;
@@ -24,6 +25,16 @@ app.get('*', (req, res, next) => {
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`Fitness-Log server listening on port ${PORT}`);
-});
+async function startServer() {
+  try {
+    await runMigrations();
+  } catch (err) {
+    console.error('Database migration warning on startup:', err.message);
+  }
+
+  app.listen(PORT, () => {
+    console.log(`Fitness-Log server listening on port ${PORT}`);
+  });
+}
+
+startServer();
