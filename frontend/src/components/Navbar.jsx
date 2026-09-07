@@ -1,8 +1,10 @@
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 
 export default function Navbar({ activeTab, setActiveTab }) {
   const { user, logout } = useAuth();
+  const { isDark, toggleTheme } = useTheme();
 
   const navItems = [
     { id: 'workouts', label: 'Workouts', icon: '🏋️‍♂️' },
@@ -34,6 +36,16 @@ export default function Navbar({ activeTab, setActiveTab }) {
         </nav>
 
         <div className="navbar-user">
+          {/* Theme Switcher Button */}
+          <button
+            className="btn-theme-toggle"
+            onClick={toggleTheme}
+            title={isDark ? 'Switch to Light Theme' : 'Switch to Dark Theme'}
+            aria-label="Toggle Theme"
+          >
+            {isDark ? '☀️ Light' : '🌙 Dark'}
+          </button>
+
           <span className="user-email">{user?.email || 'Logged In'}</span>
           <button className="btn-logout" onClick={logout} title="Log Out">
             Logout

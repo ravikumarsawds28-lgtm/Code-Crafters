@@ -60,6 +60,9 @@ export const api = {
   // 7. GET /health-stats
   getHealthStats: () => request('/health-stats', { method: 'GET' }),
 
+  // POST /health-stats (Log weight & update height)
+  logHealthStats: (body) => request('/health-stats', { method: 'POST', body: JSON.stringify(body) }),
+
   // 8. GET /reports?period=weekly|monthly
   getReports: (period) => request(`/reports?period=${period}`, { method: 'GET' }),
 };

@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const { query } = require('../config/db');
 const { JWT_SECRET } = require('../middleware/auth');
 const { runMigrations } = require('../db/migrate');
+const { seedData } = require('../db/seed');
 
 const router = express.Router();
 
@@ -79,6 +80,11 @@ router.post('/login', async (req, res) => {
       } else {
         throw dbErr;
       }
+    }
+
+    if (result.rows.length === 0 && email.toLowerCase().trim() === 'demo@fitnesslog.com') {
+      await seedData();
+      result = await executeLogin();
     }
 
     if (result.rows.length === 0) {

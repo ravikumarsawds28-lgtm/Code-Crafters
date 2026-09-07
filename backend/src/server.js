@@ -2,6 +2,7 @@ const path = require('path');
 const express = require('express');
 const app = require('./app');
 const { runMigrations } = require('./db/migrate');
+const { seedData } = require('./db/seed');
 require('dotenv').config();
 
 const PORT = process.env.PORT || 5001;
@@ -29,8 +30,11 @@ app.get('*', (req, res, next) => {
 const server = app.listen(PORT, '0.0.0.0', () => {
   console.log(`Fitness-Log server listening on 0.0.0.0:${PORT}`);
 
-  // Run migrations asynchronously once port is bound
+  // Run migrations asynchronously once port is bound, then seed demo data
   runMigrations()
-    .then(() => console.log('Database ready.'))
-    .catch((err) => console.error('Database migration note:', err.message));
+    .then(() => {
+      console.log('Database ready.');
+      return seedData();
+    })
+    .catch((err) => console.error('Database startup note:', err.message));
 });

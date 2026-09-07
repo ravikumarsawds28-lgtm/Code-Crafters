@@ -61,6 +61,22 @@ export default function Auth() {
     }
   };
 
+  const handleDemoLogin = async () => {
+    setError('');
+    setLoading(true);
+    try {
+      const res = await api.login({
+        email: 'demo@fitnesslog.com',
+        password: 'password123',
+      });
+      login(res.token, { email: 'demo@fitnesslog.com', name: 'Demo Athlete' });
+    } catch (err) {
+      setError(err.message || 'Demo login failed');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="auth-page">
       <div className="auth-card">
@@ -168,6 +184,20 @@ export default function Auth() {
             {loading ? 'Please wait...' : isLogin ? 'Sign In' : 'Create Account'}
           </button>
         </form>
+
+        <div className="demo-login-wrapper">
+          <div className="divider-text">
+            <span>OR</span>
+          </div>
+          <button
+            type="button"
+            className="btn-demo btn-block"
+            onClick={handleDemoLogin}
+            disabled={loading}
+          >
+            ⚡ Explore with Demo Data (Instant Login)
+          </button>
+        </div>
       </div>
     </div>
   );
