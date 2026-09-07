@@ -1,9 +1,7 @@
 const { Pool } = require('pg');
 require('dotenv').config();
 
-const isProduction = process.env.NODE_ENV === 'production';
 const isTest = process.env.NODE_ENV === 'test';
-
 let connectionString = process.env.DATABASE_URL;
 
 if (!connectionString) {
@@ -11,13 +9,15 @@ if (!connectionString) {
   connectionString = `postgresql://${process.env.PGUSER || process.env.USER || 'postgres'}:${process.env.PGPASSWORD || ''}@${process.env.PGHOST || 'localhost'}:${process.env.PGPORT || 5432}/${process.env.PGDATABASE || dbName}`;
 }
 
-const useSsl = process.env.DATABASE_URL &&
-  !connectionString.includes('localhost') &&
-  !connectionString.includes('127.0.0.1');
+const isLocalhost = connectionString.includes('localhost') || connectionString.includes('127.0.0.1');
+
+if (process.env.DATABASE_URL && !isLocalhost) {
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+}
 
 const pool = new Pool({
   connectionString,
-  ssl: useSsl ? { rejectUnauthorized: false } : false,
+  ssl: process.env.DATABASE_URL && !isLocalhost ? { rejectUnauthorized: false } : false,
 });
 
 module.exports = {
