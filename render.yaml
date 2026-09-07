@@ -3,11 +3,13 @@ services:
     name: fitness-log-web
     env: node
     plan: free
-    buildCommand: npm install --prefix backend && npm install --prefix frontend && npm run build --prefix frontend
+    buildCommand: npm install --prefix backend && npm install --prefix frontend --include=dev && npm run build --prefix frontend
     startCommand: node backend/src/server.js
     envVars:
       - key: NODE_ENV
         value: production
+      - key: NODE_VERSION
+        value: 20.18.0
       - key: DATABASE_URL
         sync: false
       - key: JWT_SECRET

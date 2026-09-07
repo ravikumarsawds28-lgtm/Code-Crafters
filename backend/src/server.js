@@ -25,16 +25,12 @@ app.get('*', (req, res, next) => {
   });
 });
 
-async function startServer() {
-  try {
-    await runMigrations();
-  } catch (err) {
-    console.error('Database migration warning on startup:', err.message);
-  }
+// Bind immediately to 0.0.0.0 so Render detects open port without timeout
+const server = app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Fitness-Log server listening on 0.0.0.0:${PORT}`);
 
-  app.listen(PORT, () => {
-    console.log(`Fitness-Log server listening on port ${PORT}`);
-  });
-}
-
-startServer();
+  // Run migrations asynchronously once port is bound
+  runMigrations()
+    .then(() => console.log('Database ready.'))
+    .catch((err) => console.error('Database migration note:', err.message));
+});
