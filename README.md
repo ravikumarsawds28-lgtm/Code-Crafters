@@ -173,7 +173,8 @@ Open [http://localhost:3000](http://localhost:3000) in your browser. API request
 2. **Add Workout Form & Workout History:** Form for logging exercise type, duration, sets, reps, calories burned, and date, coupled with a date-filterable history view.
 3. **Set Goal Form & Goals List:** Create goals by type (`weight_loss`, `muscle_gain`, `daily_exercise`), track progress bars, and update values/status (`active`, `achieved`, `abandoned`).
 4. **Health Statistics:** Displays computed Body Mass Index (BMI) with clinical health category badges, latest weight, and an interactive SVG chart plotting historical weight entries.
-5. **Weekly & Monthly Reports:** Aggregated activity report card featuring workout frequency, total caloric burn, and average calories per workout session over 7-day and 30-day windows.
+5. **Interactive BMI Calculator:** Dual Metric (cm/kg) & Imperial (ft/in/lbs) calculator with live interactive sliders, visual color spectrum gauge bar, healthy weight range estimator for your height, personalized feedback, and WHO classification table. Can load your profile stats with a single click.
+6. **Weekly & Monthly Reports:** Aggregated activity report card featuring workout frequency, total caloric burn, and average calories per workout session over 7-day and 30-day windows.
 
 ---
 

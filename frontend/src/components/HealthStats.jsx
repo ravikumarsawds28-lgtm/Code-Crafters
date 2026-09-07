@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../api/client';
 
-export default function HealthStats() {
+export default function HealthStats({ onOpenCalculator }) {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -49,7 +49,16 @@ export default function HealthStats() {
           <h2>Health Statistics</h2>
           <p className="section-subtitle">Monitor your Body Mass Index (BMI) and weight evolution over time.</p>
         </div>
-        <button onClick={fetchStats} className="btn-secondary btn-sm">Refresh</button>
+        <div className="btn-group">
+          {onOpenCalculator && (
+            <button onClick={onOpenCalculator} className="btn-secondary btn-sm">
+              🧮 BMI Calculator
+            </button>
+          )}
+          <button onClick={fetchStats} className="btn-secondary btn-sm">
+            Refresh
+          </button>
+        </div>
       </div>
 
       {loading ? (
@@ -61,6 +70,13 @@ export default function HealthStats() {
             <h3>Height Not Found</h3>
             <p>{error}</p>
             <small>Make sure your account was created with a valid height in centimeters.</small>
+            {onOpenCalculator && (
+              <div style={{ marginTop: '1.25rem' }}>
+                <button onClick={onOpenCalculator} className="btn-primary btn-sm">
+                  🧮 Open Interactive BMI Calculator
+                </button>
+              </div>
+            )}
           </div>
         </div>
       ) : (

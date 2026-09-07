@@ -8,6 +8,7 @@ export default function Navbar({ activeTab, setActiveTab }) {
     { id: 'workouts', label: 'Workouts', icon: '🏋️‍♂️' },
     { id: 'goals', label: 'Goals', icon: '🎯' },
     { id: 'health-stats', label: 'Health Stats', icon: '📊' },
+    { id: 'bmi-calculator', label: 'BMI Calculator', icon: '🧮' },
     { id: 'reports', label: 'Reports', icon: '📈' },
   ];
 

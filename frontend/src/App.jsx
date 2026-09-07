@@ -5,6 +5,7 @@ import Auth from './components/Auth';
 import Workouts from './components/Workouts';
 import Goals from './components/Goals';
 import HealthStats from './components/HealthStats';
+import BmiCalculator from './components/BmiCalculator';
 import Reports from './components/Reports';
 import './App.css';
 
@@ -22,7 +23,8 @@ function MainContent() {
       <main className="main-content">
         {activeTab === 'workouts' && <Workouts />}
         {activeTab === 'goals' && <Goals />}
-        {activeTab === 'health-stats' && <HealthStats />}
+        {activeTab === 'health-stats' && <HealthStats onOpenCalculator={() => setActiveTab('bmi-calculator')} />}
+        {activeTab === 'bmi-calculator' && <BmiCalculator />}
         {activeTab === 'reports' && <Reports />}
       </main>
       <footer className="app-footer">
