@@ -71,3 +71,51 @@ router.get('/', authenticateToken, async (req, res) => {
 });
 
 module.exports = router;
+const requireOwnership = require('../middleware/requireOwnership');
+
+// PATCH /workouts/{id} — auth + owner only — body: {exercise_type?, duration_min?, sets?, reps?, calories_burned?, workout_date?} -> 200 updated workout
+router.patch('/:id', authenticateToken, requireOwnership('Workout'), async (req, res) => {
+  const workoutId = parseInt(req.params.id, 10);
+  const { exercise_type, duration_min, sets, reps, calories_burned, workout_date } = req.body;
+
+  const updates = [];
+  const params = [];
+
+  if (exercise_type !== undefined) { params.push(exercise_type); updates.push(`"exercise_type" = $${params.length}`); }
+  if (duration_min !== undefined) { params.push(duration_min); updates.push(`"duration_min" = $${params.length}`); }
+  if (sets !== undefined) { params.push(sets); updates.push(`"sets" = $${params.length}`); }
+  if (reps !== undefined) { params.push(reps); updates.push(`"reps" = $${params.length}`); }
+  if (calories_burned !== undefined) { params.push(calories_burned); updates.push(`"calories_burned" = $${params.length}`); }
+  if (workout_date !== undefined) { params.push(workout_date); updates.push(`"workout_date" = $${params.length}`); }
+
+  if (updates.length === 0) {
+    return res.status(400).json({ error: 'No fields provided to update' });
+  }
+
+  params.push(workoutId);
+
+  try {
+    const result = await query(
+      `UPDATE "Workout" SET ${updates.join(', ')} WHERE "WorkoutID" = $${params.length}
+       RETURNING "WorkoutID", "exercise_type", "duration_min", "sets", "reps", "calories_burned",
+                 TO_CHAR("workout_date", 'YYYY-MM-DD') AS "workout_date"`,
+      params
+    );
+    return res.status(200).json(result.rows[0]);
+  } catch (err) {
+    console.error('Update workout error:', err);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// DELETE /workouts/{id} — auth + owner only -> 204 No Content
+router.delete('/:id', authenticateToken, requireOwnership('Workout'), async (req, res) => {
+  const workoutId = parseInt(req.params.id, 10);
+  try {
+    await query(`DELETE FROM "Workout" WHERE "WorkoutID" = $1`, [workoutId]);
+    return res.status(204).send();
+  } catch (err) {
+    console.error('Delete workout error:', err);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+});
