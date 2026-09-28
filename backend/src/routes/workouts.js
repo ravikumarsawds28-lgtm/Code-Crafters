@@ -38,9 +38,9 @@ router.post('/', authenticateToken, async (req, res) => {
   }
 });
 
-// 4. GET /workouts — auth required — query: date_from, date_to -> 200 [{WorkoutID, exercise_type, duration_min, calories_burned, workout_date}]
+// 4. GET /workouts — auth required — query: date_from, date_to, exercise_type -> 200 [{WorkoutID, exercise_type, duration_min, calories_burned, workout_date}]
 router.get('/', authenticateToken, async (req, res) => {
-  const { date_from, date_to } = req.query;
+  const { date_from, date_to, exercise_type } = req.query;
 
   try {
     const conditions = ['"UserID" = $1'];
@@ -54,6 +54,11 @@ router.get('/', authenticateToken, async (req, res) => {
     if (date_to) {
       params.push(date_to);
       conditions.push(`"workout_date" <= $${params.length}`);
+    }
+
+    if (exercise_type) {
+      params.push(exercise_type);
+      conditions.push(`"exercise_type" = $${params.length}`);
     }
 
     const sql = `
