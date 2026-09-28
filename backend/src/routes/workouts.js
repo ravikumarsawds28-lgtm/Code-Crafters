@@ -1,6 +1,7 @@
 const express = require('express');
 const { query } = require('../config/db');
 const { authenticateToken } = require('../middleware/auth');
+const requireOwnership = require('../middleware/requireOwnership');
 
 const router = express.Router();
 
@@ -70,9 +71,6 @@ router.get('/', authenticateToken, async (req, res) => {
   }
 });
 
-module.exports = router;
-const requireOwnership = require('../middleware/requireOwnership');
-
 // PATCH /workouts/{id} — auth + owner only — body: {exercise_type?, duration_min?, sets?, reps?, calories_burned?, workout_date?} -> 200 updated workout
 router.patch('/:id', authenticateToken, requireOwnership('Workout'), async (req, res) => {
   const workoutId = parseInt(req.params.id, 10);
@@ -81,7 +79,13 @@ router.patch('/:id', authenticateToken, requireOwnership('Workout'), async (req,
   const updates = [];
   const params = [];
 
-  if (exercise_type !== undefined) { params.push(exercise_type); updates.push(`"exercise_type" = $${params.length}`); }
+  if (exercise_type !== undefined) {
+    if (typeof exercise_type !== 'string' || exercise_type.trim() === '') {
+      return res.status(400).json({ error: 'exercise_type cannot be empty' });
+    }
+    params.push(exercise_type.trim());
+    updates.push(`"exercise_type" = $${params.length}`);
+  }
   if (duration_min !== undefined) { params.push(duration_min); updates.push(`"duration_min" = $${params.length}`); }
   if (sets !== undefined) { params.push(sets); updates.push(`"sets" = $${params.length}`); }
   if (reps !== undefined) { params.push(reps); updates.push(`"reps" = $${params.length}`); }
@@ -119,3 +123,5 @@ router.delete('/:id', authenticateToken, requireOwnership('Workout'), async (req
     return res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+module.exports = router;
