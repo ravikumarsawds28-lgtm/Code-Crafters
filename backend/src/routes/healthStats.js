@@ -32,14 +32,13 @@ router.get('/', authenticateToken, async (req, res) => {
       log_date: row.log_date,
     }));
 
-    let latest_weight = null;
-    let bmi = null;
-
-    if (weight_history.length > 0) {
-      latest_weight = weight_history[0].weight_kg;
-      const height_m = parseFloat(height_cm) / 100;
-      bmi = parseFloat((latest_weight / (height_m * height_m)).toFixed(2));
+    if (weight_history.length === 0) {
+      return res.status(404).json({ error: 'No weight entries exist' });
     }
+
+    const latest_weight = weight_history[0].weight_kg;
+    const height_m = parseFloat(height_cm) / 100;
+    const bmi = parseFloat((latest_weight / (height_m * height_m)).toFixed(2));
 
     return res.status(200).json({
       bmi,
